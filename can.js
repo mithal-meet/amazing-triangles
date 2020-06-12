@@ -1,4 +1,6 @@
 var canvas=document.getElementById('box');
+var context = canvas.getContext('2d');
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -21,20 +23,12 @@ document.addEventListener('mouseup', (params) => {
     draw();
 })
 
-function getSideLength() {
-    const height = endCOD.y - startCOD.y;
-    const side = 1.15 * height;
-
-    return side;
-}   
-
 function draw() {
 
     const leftCOD = { x: startCOD.x - (endCOD.x - startCOD.x), y: endCOD.y};
     const rightCOD = {x: endCOD.x, y : endCOD.y }
     
     
-    var context = canvas.getContext('2d');
     context.beginPath();
     context.moveTo(startCOD.x, startCOD.y);
     context.lineTo(leftCOD.x, leftCOD.y);
@@ -42,5 +36,9 @@ function draw() {
     context.fillStyle = colors[currentColor];
     context.fill();
     
+
+}
+ function clearCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
 }
