@@ -10,7 +10,7 @@ var endCOD = {};
 const colors = ['red', 'green', 'blue', 'yellow', 'black'];
 let currentColor = 0;
 
-const triangles = [];
+let triangles = [];
 
 let isDragging = false;
 let triangleBeingDragged = null;
@@ -44,24 +44,22 @@ function isTrianglePresent(startCOD) {
             triangleDragStartCOD = startCOD;
             return false;
         }
-    })
-    
-    //function trianglepresent)
+    })   
 }
 
 
 
-document.addEventListener('mousedown', (params) => {
+canvas.addEventListener('mousedown', (params) => {
     startCOD.x = params.offsetX;
     startCOD.y = params.offsetY;
 
     isTrianglePresent(startCOD);
-    console.log(triangles);
+    // console.log(triangles);
 })
 
-function updateDrawing(endCOD) {
-    const diffX = endCOD.x - triangleDragStartCOD.x;
-    const diffY = endCOD.y - triangleDragStartCOD.y;
+function updateDrawing(dragStartCOD, dragEndCOD) {
+    const diffX = dragEndCOD.x - dragStartCOD.x;
+    const diffY = dragEndCOD.y - dragStartCOD.y;
 
     const triangleFound = triangles[triangleBeingDragged];
     const {startCOD, leftCOD, rightCOD, color } = triangleFound;
@@ -75,29 +73,32 @@ function updateDrawing(endCOD) {
 }
 
 
-document.addEventListener('mouseup', (params) => {
+canvas.addEventListener('mouseup', (params) => {
     endCOD.x = params.offsetX;
     endCOD.y = params.offsetY;
 
     if (!isDragging) {
         drawNewTriangle();
     } else {
-        updateDrawing(endCOD);
+        // updateDrawing(triangleDragStartCOD, endCOD);
         isDragging = false;
     }
 
     // console.log(triangles)
 })
 
-//document.addEventListener('mousemove', (params) => {
-    //const currentCOD = {};
-   // currentCOD.x = params.offsetX;
-    // currentCOD.y = params.offsetY;
-    // console.log('current: ', currentCOD)
-    //if (isDragging) {
-    //    updateDrawing(currentCOD);
-    //}
-//})
+document.addEventListener('mousemove', (params) => {
+    const currentCOD = {};
+    currentCOD.x = params.offsetX;
+    currentCOD.y = params.offsetY;
+    
+    if (isDragging) {
+        currentTriangleCOD = triangles[triangleBeingDragged].startCOD;
+        if (isDragging) {
+            updateDrawing(currentTriangleCOD, currentCOD);
+        }
+    }
+})
 
 function drawNewTriangle() {
 
@@ -130,16 +131,20 @@ function drawOnCanvas(data) {
 
 function clearCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height);
+}
 
+
+function resetCanvas() {
+    triangles = [];
 }
 
 
 function animate() {
     clearCanvas();
-    requestAnimationFrame(animate);
     triangles.forEach(triangle => {
         drawOnCanvas(triangle)
     })
+    requestAnimationFrame(animate);
 }
 
 animate();
