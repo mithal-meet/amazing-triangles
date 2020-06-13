@@ -15,6 +15,7 @@ let triangles = [];
 let isDragging = false;
 let triangleBeingDragged = null;
 let triangleDragStartCOD = {};
+let triangleBeingclicked = null;
 
 function sign ( p1,  p2,  p3)
 {
@@ -36,15 +37,17 @@ function PointInTriangle ( pt,  v1,  v2,  v3)
     return !(has_neg && has_pos);
 }
 
-function isTrianglePresent(startCOD) {
+function checkIfTrianglePresent(startCOD) {
+    let isTrianglePresent = false;
     triangles.forEach((triangle, index) => {
         if (PointInTriangle(startCOD, triangle.startCOD, triangle.leftCOD, triangle.rightCOD)) {
-            isDragging = true;
+            isTrianglePresent = true;
             triangleBeingDragged = index;
             triangleDragStartCOD = startCOD;
             return false;
         }
     })   
+    return isTrianglePresent;
 }
 
 
@@ -53,7 +56,9 @@ canvas.addEventListener('mousedown', (params) => {
     startCOD.x = params.offsetX;
     startCOD.y = params.offsetY;
 
-    isTrianglePresent(startCOD);
+    if (checkIfTrianglePresent(startCOD)) {
+        isDragging = true;
+    }
     // console.log(triangles);
 })
 
@@ -82,12 +87,13 @@ canvas.addEventListener('mouseup', (params) => {
     } else {
         // updateDrawing(triangleDragStartCOD, endCOD);
         isDragging = false;
+
     }
 
     // console.log(triangles)
 })
 
-document.addEventListener('mousemove', (params) => {
+canvas.addEventListener('mousemove', (params) => {
     const currentCOD = {};
     currentCOD.x = params.offsetX;
     currentCOD.y = params.offsetY;
@@ -97,6 +103,15 @@ document.addEventListener('mousemove', (params) => {
         if (isDragging) {
             updateDrawing(currentTriangleCOD, currentCOD);
         }
+    }
+})
+canvas.addEventListener('dblclick',(params)=> {
+    const currentCOD = {};
+    currentCOD.x = params.offsetX;
+    currentCOD.y = params.offsetY;
+
+    if (checkIfTrianglePresent(currentCOD)) {
+        triangles.splice(triangleBeingDragged, 1);
     }
 })
 
